@@ -61,8 +61,14 @@ $USER_NAME ALL=(root) NOPASSWD: /usr/bin/systemctl start vault-cert-pull.service
 EOF
 visudo -cf "$TMP" >/dev/null || { rm -f "$TMP"; die "sudoers syntax check failed; nothing installed"; }
 install -m 440 -o root -g root "$TMP" "$SUDOERS"; rm -f "$TMP"
-visudo -c >/dev/null || die "visudo -c failed after install: check $SUDOERS"
+visudo -cf "$SUDOERS" >/dev/null || die "visudo rejects the installed $SUDOERS"
 echo "sudoers installed: $SUDOERS"
+# Whole-config check: report problems in OTHER files, but they are not this script's to fix.
+# (GlyphScribe 2026-11-01: sovereign-deploy had the wrong mode and stopped the first run here.)
+if ! all=$(visudo -c 2>&1); then
+  echo "WARNING: visudo -c reports a problem in another sudoers file (not changed by this script):"
+  printf '%s\n' "$all" | grep -v ': parsed OK$' | sed 's/^/    /'
+fi
 
 rm -f "$PUB" /tmp/add-glyphops.sh
 echo
