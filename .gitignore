@@ -1,0 +1,7 @@
+# Never commit keys or secrets
+*.key
+*.pem
+*.cred
+secrets/*.json
+*.local.ps1
+logs/
