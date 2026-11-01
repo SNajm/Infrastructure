@@ -36,7 +36,9 @@ $check = Join-Path (Split-Path $PSScriptRoot -Parent) 'server\check-deploy-separ
 if (-not (Test-Path $key)) { Fail "deploy key not found: $key" }
 
 $body = (Get-Content $check -Raw) -replace "`r", ''
-$out  = $body | & $ssh -i $key -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=10 "${App}deploy@$($hosts[$Server])" "bash -s $App" 2>&1
+$out  = $body | & $ssh -i $key -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=10 "${App}deploy@$($hosts[$Server])" "tr -d '\r' | bash -s $App" 2>&1
+# tr on the server: PowerShell appends a CRLF after piped text, and a lone "\r" line reached bash as
+# a command (exit 127) after every check had passed (first run, mimir on GlyphScribe, 2026-11-01).
 $rc   = $LASTEXITCODE
 $out | ForEach-Object {
     $line = "$_"
