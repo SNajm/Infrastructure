@@ -39,7 +39,10 @@ foreach ($f in Get-ChildItem (Join-Path $repo 'Scripts') -Filter *.ps1) {
         "$($f.Name): takes a credential as a parameter (prompt for it instead)"
 }
 
-$bash = (Get-Command bash -ErrorAction SilentlyContinue)?.Source
+# Git Bash first: WindowsApps\bash.exe is WSL's, which cannot open D:\ paths (every file "fails" with 127).
+$bash = @("$env:ProgramFiles\Git\bin\bash.exe") + @(Get-Command bash -All -ErrorAction SilentlyContinue |
+    Where-Object Source -notlike '*\WindowsApps\*' | ForEach-Object Source) |
+    Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
 foreach ($f in Get-ChildItem (Join-Path $repo 'server'), (Join-Path $repo 'Scripts') -Filter *.sh) {
     $bytes = [IO.File]::ReadAllBytes($f.FullName)
     Check (-not ($bytes -contains 13)) "$($f.Name): has CR line endings (bash on the server breaks)"
