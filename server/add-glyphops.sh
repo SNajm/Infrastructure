@@ -32,8 +32,6 @@ echo "  - $SUDOERS (checked with visudo before install):"
 echo "      $USER_NAME ALL=(ALL) ALL                     # full sudo, always with password"
 echo "      $USER_NAME ALL=(root) NOPASSWD: /usr/bin/systemctl start vault-cert-pull.service, /opt/pki/pki-status.sh"
 echo
-read -r -p "Type yes to apply: " answer
-[ "$answer" = "yes" ] || die "nothing changed"
 
 if ! id "$USER_NAME" >/dev/null 2>&1; then
   useradd -m -s /bin/bash -c "Operator account for scripted admin work (C001.261031T2215)" "$USER_NAME"

@@ -43,11 +43,8 @@ RULE="$DEPLOY_USER ALL=(root) NOPASSWD: /usr/bin/systemctl start $APP, /usr/bin/
 
 getent group "$GROUP" >/dev/null || die "group $GROUP does not exist: set up the app's service user first (its deployment manual)"
 
-confirm() {
-  echo
-  read -r -p "Type yes to apply: " answer
-  [ "$answer" = "yes" ] || { echo "nothing changed"; log "CANCELLED $APP $MODE"; exit 0; }
-}
+# No confirmation: running the command is the decision (deployment-script standard).
+confirm() { echo; echo "Applying..."; }
 
 echo "Server: $(hostname)   App: $APP   Mode: $MODE   Run by: ${SUDO_USER:-root}"
 echo

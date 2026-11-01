@@ -5,8 +5,8 @@
 
 .DESCRIPTION
     Copies server/add-deploy-user.sh (and for 'stage' the app's public key) to /tmp on the server as
-    glyphops, then runs it with sudo in an interactive session. On the server it shows the plan and asks
-    for 'yes'; sudo asks for glyphops's password.
+    glyphops, then runs it with sudo in an interactive session. On the server it prints what it will do,
+    then does it; sudo asks for glyphops's password at the start.
 
       stage   create <app>deploy with its key, group and sudo rule. Old deploys keep working.
       take    the switch: /opt/<app> passes from glyphadmin to <app>deploy.
